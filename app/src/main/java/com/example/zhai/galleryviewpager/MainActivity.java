@@ -19,15 +19,11 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    //点击索引
+    private int click;
     private ViewPager mViewPager;
     private RelativeLayout mViewPagerContainer;
-    private static int TOTAL_COUNT = 10;
     private ArrayList<Integer> mList;
-    private float downX;
-    private float downY;
-    //默认距离
-    private final static float DISTANCE = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         //int width = mViewPagerContainer.getMeasuredWidth();
         int height = mViewPagerContainer.getMeasuredHeight();
         int windowWidth = DeviceUtils.getWindowWidth(this);
+
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(windowWidth / 2, height * 8 / 10);
 
         /**** 重要部分  ******/
@@ -74,16 +71,49 @@ public class MainActivity extends AppCompatActivity {
         //设置预加载数量
         mViewPager.setOffscreenPageLimit(3);
         //设置每页之间的左右间隔
-        mViewPager.setPageMargin(0);
+        mViewPager.setPageMargin(10);
 
         //将容器的触摸事件反馈给ViewPager
         mViewPagerContainer.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return mViewPager.dispatchTouchEvent(event);
+            public boolean onTouch(View v, MotionEvent ev) {
+                if (ev.getAction() == MotionEvent.ACTION_UP) {
+                    View view = viewOfClickOnScreen(ev);
+                    if (view != null) {
+                        //mViewPager.setCurrentItem(mViewPager.indexOfChild(view));
+                        click = mViewPager.indexOfChild(view);
+                        mViewPager.setCurrentItem(click);
+                        return false;
+                    }
+                }
+                return mViewPager.dispatchTouchEvent(ev);
             }
         });
     }
+
+    public View viewOfClickOnScreen(MotionEvent ev) {
+        int childCount = mViewPager.getChildCount();
+        int[] location = new int[2];
+        for (int i = 0; i < childCount; i++) {
+            View v = mViewPager.getChildAt(i);
+            v.getLocationOnScreen(location);
+            int minX = location[0];
+            int minY = mViewPager.getTop();
+
+            int maxX = location[0] + v.getWidth();
+            int maxY = mViewPager.getBottom();
+
+            float x = ev.getX();
+            float y = ev.getY();
+
+            if ((x > minX && x < maxX) && (y > minY && y < maxY)) {
+                return v;
+            }
+        }
+        return null;
+    }
+
     class MyPagerAdapter extends PagerAdapter {
 
         @Override
@@ -102,15 +132,12 @@ public class MainActivity extends AppCompatActivity {
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setImageResource(mList.get(position));
             ((ViewPager) container).addView(imageView);
+            imageView.setTag(position);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int currentItem = mViewPager.getCurrentItem();
-                    if (currentItem == position){
-                        Toast.makeText(MainActivity.this,"点点点",Toast.LENGTH_SHORT).show();
-                    }
-                    mViewPager.setCurrentItem(position);
-                   // Log.e("imageView index = ", "" + position);
+                    int index = (int) v.getTag();
+                    Toast.makeText(MainActivity.this, "点点" + index, Toast.LENGTH_SHORT).show();
                 }
             });
             return imageView;

@@ -1,3 +1,5 @@
+![img]https://github.com/Zhai-WenWu/Gallery_ViewPager/blob/master/app/src/main/res/drawable/b.png
+
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
