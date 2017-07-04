@@ -1,4 +1,4 @@
-![img]https://github.com/Zhai-WenWu/Gallery_ViewPager/blob/master/app/src/main/res/drawable/d.png
+![img](https://github.com/Zhai-WenWu/Gallery_ViewPager/blob/master/app/src/main/res/drawable/d.png)
 
 public class MainActivity extends AppCompatActivity {
 
