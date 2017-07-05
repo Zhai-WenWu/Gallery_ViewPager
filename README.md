@@ -1,3 +1,4 @@
+![image](https://github.com/Zhai-WenWu/Gallery_ViewPager/blob/master/gif/123.gif)  
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager mViewPager;
