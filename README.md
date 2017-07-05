@@ -1,8 +1,5 @@
-![img]https://github.com/Zhai-WenWu/Gallery_ViewPager/blob/master/app/src/main/res/drawable/b.png
-
 public class MainActivity extends AppCompatActivity {
-        
-        //你好你好
+
     private ViewPager mViewPager;
     private RelativeLayout mViewPagerContainer;
     private static int TOTAL_COUNT = 10;
