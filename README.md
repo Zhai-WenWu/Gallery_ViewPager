@@ -2,7 +2,7 @@
 
 public class MainActivity extends AppCompatActivity {
         
-        //你好
+        //你好你好
     private ViewPager mViewPager;
     private RelativeLayout mViewPagerContainer;
     private static int TOTAL_COUNT = 10;
