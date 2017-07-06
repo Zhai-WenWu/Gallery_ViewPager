@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         //设置ViewPager切换效果，即实现画廊效果
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         //设置预加载数量
-        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(mList.size()-1);
         //设置每页之间的左右间隔
         mViewPager.setPageMargin(10);
 
@@ -160,14 +160,11 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void transformPage(View view, float position) {
-            //Log.e( "transformPage: ",position+"");
-            //setScaleY只支持api11以上
             if (position < -1) {
                 view.setScaleX(MIN_SCALE);
                 view.setScaleY(MIN_SCALE);
             } else if (position <= 1) //a页滑动至b页 ； a页从 0.0 -1 ；b页从1 ~ 0.0
-            { // [-1,1]
-//              Log.e("TAG", view + " , " + position + "");
+            {
                 float scaleFactor = MIN_SCALE + (1 - Math.abs(position)) * (MAX_SCALE - MIN_SCALE);
                 view.setScaleX(scaleFactor);
                 //每次滑动后进行微小的移动目的是为了防止在三星的某些手机上出现两边的页面为显示的情况
