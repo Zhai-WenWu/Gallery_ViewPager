@@ -1,11 +1,9 @@
 package com.example.zhai.galleryviewpager;
 
+import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +13,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import static android.widget.Toast.LENGTH_SHORT;
-
 
 public class MainActivity extends AppCompatActivity {
     //点击索引
@@ -24,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private RelativeLayout mViewPagerContainer;
     private ArrayList<Integer> mList;
+    private ArrayList<ImageView> views;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +38,22 @@ public class MainActivity extends AppCompatActivity {
         mList.add(R.drawable.g);
         mList.add(R.drawable.h);
         mList.add(R.drawable.i);
+        views = new ArrayList<>();
+
+        for (int i = 0; i < mList.size(); i++) {
+            final ImageView imageView = new ImageView(MainActivity.this);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            imageView.setImageResource(mList.get(i));
+            imageView.setTag(i);
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(MainActivity.this, "点点" + (int) imageView.getTag(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            views.add(imageView);
+        }
+        ;
         initViewPager();
     }
 
@@ -69,9 +82,9 @@ public class MainActivity extends AppCompatActivity {
         //设置ViewPager切换效果，即实现画廊效果
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         //设置预加载数量
-        mViewPager.setOffscreenPageLimit(mList.size()-1);
+        mViewPager.setOffscreenPageLimit(3);
         //设置每页之间的左右间隔
-        mViewPager.setPageMargin(10);
+        mViewPager.setPageMargin(100);
 
         //将容器的触摸事件反馈给ViewPager
         mViewPagerContainer.setOnTouchListener(new View.OnTouchListener() {
@@ -80,11 +93,20 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent ev) {
                 if (ev.getAction() == MotionEvent.ACTION_UP) {
                     View view = viewOfClickOnScreen(ev);
-                    if (view != null) {
-                        //mViewPager.setCurrentItem(mViewPager.indexOfChild(view));
-                        click = mViewPager.indexOfChild(view);
-                        mViewPager.setCurrentItem(click);
-                        return false;
+                    if (view != null && currentView != null) {
+                        int indexClick = mViewPager.indexOfChild(view);
+                        int currentPosition = mViewPager.getCurrentItem();
+                        int currentIndex = mViewPager.indexOfChild(currentView);
+                        if (currentView.equals(view)) {
+                            return mViewPager.dispatchTouchEvent(ev);
+                        } else {
+                            if (indexClick == currentIndex - 1) {
+                                mViewPager.setCurrentItem(currentPosition - 1);
+                            } else if (indexClick == currentIndex + 1) {
+                                mViewPager.setCurrentItem(currentPosition + 1);
+                            }
+                            return false;
+                        }
                     }
                 }
                 return mViewPager.dispatchTouchEvent(ev);
@@ -94,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
     public View viewOfClickOnScreen(MotionEvent ev) {
         int childCount = mViewPager.getChildCount();
+
         int[] location = new int[2];
         for (int i = 0; i < childCount; i++) {
             View v = mViewPager.getChildAt(i);
@@ -114,6 +137,9 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
+
+    View currentView;
+
     class MyPagerAdapter extends PagerAdapter {
 
         @Override
@@ -126,20 +152,27 @@ public class MainActivity extends AppCompatActivity {
             return (view == object);
         }
 
+
+        @Override
+        public void setPrimaryItem(ViewGroup container, int position, Object object) {
+            super.setPrimaryItem(container, position, object);
+            currentView = (View) object;
+        }
+
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
-            ImageView imageView = new ImageView(MainActivity.this);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            imageView.setImageResource(mList.get(position));
+            ImageView imageView = views.get(position);
+//            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//            imageView.setImageResource(mList.get(position));
             ((ViewPager) container).addView(imageView);
-            imageView.setTag(position);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int index = (int) v.getTag();
-                    Toast.makeText(MainActivity.this, "点点" + index, Toast.LENGTH_SHORT).show();
-                }
-            });
+//            imageView.setTag(position);
+//            imageView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    int index = (int) v.getTag();
+//
+//                }
+//            });
             return imageView;
 
         }
