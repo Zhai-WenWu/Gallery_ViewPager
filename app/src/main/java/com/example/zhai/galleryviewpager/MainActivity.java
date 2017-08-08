@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         //设置ViewPager切换效果，即实现画廊效果
         mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         //设置预加载数量
-        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(mList.size()-1);
         //设置每页之间的左右间隔
         mViewPager.setPageMargin(100);
 
